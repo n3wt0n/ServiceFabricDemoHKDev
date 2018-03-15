@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Test Backend Connection</h2>
+        <a href="#" id="btnTestConnection" class="btn btn-default">Test...</a>
+        <br />
+        <br />
+        <span id="lblConnectionState" class="label label-info">Not performed...</span>
+    </div>
+
+    <div class="col-md-4">
+        <h2>Get Backend Node Name</h2>
+        <a href="#" id="btnGetNodeName" class="btn btn-default">Get w/RP...</a><a href="#" id="btnGetNodeNameDNS" class="btn btn-default">Get w/DNS...</a>
+        <br />
+        <br />
+        <span id="lblNodeName" class="label label-info">Not performed...</span>
+    </div>
+
+    <div class="col-md-4">
+        <h2>Insert and Read Values</h2>
+        <input type="text" id="txtNewValue" /> <a href="#" id="btnInsert" class="btn btn-default">Save</a>
+        <br />
+        <br />
+        <div id="pnlContent"></div>
+    </div>
+</div>
+
+@section Scripts
+    {
+<script>
+    $(function () {
+        $("#btnTestConnection").click(function () {
+            $.ajax({
+                type: "GET",
+                url: '/Home/TestConnection',
+                dataType: "json",
+                success: function (result) {
+                    if (result) {
+                        $("#lblConnectionState").html("All Good!");
+                        $("#lblConnectionState").removeClass().addClass("label label-success");
+                    }
+                    else {
+                        $("#lblConnectionState").html("Something went wrong...");
+                        $("#lblConnectionState").removeClass().addClass("label label-warning");
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#lblConnectionState").html(thrownError);
+                    $("#lblConnectionState").removeClass().addClass("label label-danger");
+                }
+            });
+        });
+
+        $("#btnGetNodeName").click(function () {
+            $.ajax({
+                type: "GET",
+                url: '/Home/GetNodeName',
+                dataType: "json",
+                success: function (result) {
+                    $("#lblNodeName").html(result);
+                    $("#lblNodeName").removeClass().addClass("label label-success");
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#lblNodeName").html(thrownError);
+                    $("#lblNodeName").removeClass().addClass("label label-danger");
+                }
+            });
+        });
+
+        $("#btnGetNodeNameDNS").click(function () {
+            $.ajax({
+                type: "GET",
+                url: '/Home/GetNodeNameDNS',
+                dataType: "json",
+                success: function (result) {
+                    $("#lblNodeName").html(result);
+                    $("#lblNodeName").removeClass().addClass("label label-success");
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#lblNodeName").html(thrownError);
+                    $("#lblNodeName").removeClass().addClass("label label-danger");
+                }
+            });
+        });
+
+        ReadContent();
+
+        $("#btnInsert").click(function () {
+
+            $.ajax({
+                type: "POST",
+                url: '/Home/SaveValue?newValue=' + $("#txtNewValue").val(),
+                dataType: "json",
+                success: function (result) {
+                    ReadContent();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#pnlContent").html(thrownError);
+                    $("#pnlContent").addClass("label-danger");
+                }
+            });
+        });
+    });
+
+    function ReadContent() {
+        $.ajax({
+            type: "GET",
+            url: '/Home/ReadValues',
+            dataType: "json",
+            success: function (result) {
+                if (result) {
+                    $("#pnlContent").html(result);
+                }
+                else {
+                    $("#pnlContent").html("Something went wrong...");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $("#pnlContent").html(thrownError);
+            }
+        });
+
+    }
+
+
+</script>
+}
